@@ -1,0 +1,34 @@
+{
+    "paths": [
+        {
+            "name": "/getProducts",
+            "lambdaFunction": "productmanagement",
+            "privacy": {
+                "open": true
+            }
+        }
+    ],
+    "resourceName": "productmanagement",
+    "apiName": "productmanagement",
+    "functionArns": [
+        {
+            "lambdaFunction": "productmanagement"
+        }
+    ],
+    "privacy": {
+        "auth": 0,
+        "unauth": 0,
+        "authRoleName": "amplify-handydigital-dev-221234-authRole",
+        "unAuthRoleName": "amplify-handydigital-dev-221234-unauthRole"
+    },
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "productmanagement",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
+        }
+    ]
+}
