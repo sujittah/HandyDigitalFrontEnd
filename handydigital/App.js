@@ -5,22 +5,23 @@
  * @format
  * @flow strict-local
  */
-import Amplify from 'aws-amplify';
+import {API,Amplify} from 'aws-amplify';
 import config from './aws-exports';
 Amplify.configure(config);
 import { withAuthenticator } from 'aws-amplify-react-native'
-import React, { useEffect,useState } from 'react';
+import React, {Component,useEffect,useState } from 'react';
 import {
+AppRegistry,
+   FlatList,
   SafeAreaView,
   StyleSheet,
-  ScrollView,
+  ActivityIndicator,
   View,
   Text,
 TextInput,
   StatusBar,
+  Alert
 } from 'react-native';
-
-import { API} from 'aws-amplify'
 
 import {
   Header,
@@ -30,79 +31,56 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const App: () => React$Node = () => {
-  const [text, setText] = useState('');
+export default App = () => {
   const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
 
-const apiName = 'productmanagement';
-const path = '/getProducts'; 
-const myInit = { // OPTIONAL
-    headers: {}, // OPTIONAL
-    response: false, // OPTIONAL (return the entire Axios response object instead of only response.data)
-    queryStringParameters: {  // OPTIONAL
-        name: 'param',
-    },
-};
+ renderSeparator = () => {
+        return (
+            <View
+                style={{
+                    height: 1,
+                    width: "100%",
+                    backgroundColor: "#000",
+                }}
+            />
+        );
+    };
+    //handling onPress action
+    getListViewItem = (item) => {
+        Alert.alert(item);
+    }
 
-useEffect(() => {
-    API.get(apiName, path, myInit)
-      .then((response) =>  setText(response))
+  useEffect(() => {
+    fetch('https://mzxrlklrke.execute-api.ap-south-1.amazonaws.com/dev/getProducts')
+      .then((response) => response.json())
+      .then((json) => setData(json))
       .catch((error) => console.error(error))
-    .finally(() => setLoading(false));
+      .finally(() => setLoading(false));
   }, []);
+
   return (
-    <View style={{padding: 10}}>
-      <TextInput
-        style={{height: 40}}
-        placeholder="Type here to translate...!"
-        onChangeText={text => setText(text)}
-        defaultValue={text}
-      />
-      <Text style={{padding: 10, fontSize: 42}}>
-        {text.split(' ').map((word) => word && 'ttssstt').join(' ')}
-      </Text>
+    <View style={{ flex: 1, padding: 24 }}>
+      {isLoading ? <ActivityIndicator/> : (
+        <FlatList
+          data={data}
+          renderItem={({item}) =>
+          <Text onPress={this.getListViewItem.bind(this, item)}>{item.productname}</Text>}
+                ItemSeparatorComponent={this.renderSeparator}
+          />
+      )}
     </View>
   );
-
+  const styles = StyleSheet.create({
+      container: {
+          flex: 1,
+      },
+      item: {
+          padding: 10,
+          fontSize: 18,
+          height: 44,
+      },
+  })
 };
 
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
 
-export default App;
