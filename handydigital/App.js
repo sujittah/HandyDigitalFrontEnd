@@ -7,6 +7,7 @@
  */
 import {API,Amplify} from 'aws-amplify';
 import config from './aws-exports';
+import { Header } from 'react-native-elements';
 Amplify.configure(config);
 import { withAuthenticator } from 'aws-amplify-react-native'
 import React, {Component,useEffect,useState } from 'react';
@@ -21,10 +22,11 @@ AppRegistry,
 TextInput,
   StatusBar,
   Alert
+
+
 } from 'react-native';
 
 import {
-  Header,
   LearnMoreLinks,
   Colors,
   DebugInstructions,
@@ -52,7 +54,12 @@ export default App = () => {
     }
 
   useEffect(() => {
-    fetch('https://mzxrlklrke.execute-api.ap-south-1.amazonaws.com/dev/getProducts')
+    fetch('https://mzxrlklrke.execute-api.ap-south-1.amazonaws.com/dev/getProducts',{
+       method: 'GET',
+       headers: {
+             'x-api-key': 'NqwoT8A2aH62NCMmpoeMd9r1ERhSm1oO5KTxjeGx'
+       }
+       })
       .then((response) => response.json())
       .then((json) => setData(json))
       .catch((error) => console.error(error))
@@ -61,14 +68,22 @@ export default App = () => {
 
   return (
     <View style={{ flex: 1, padding: 24 }}>
-      {isLoading ? <ActivityIndicator/> : (
+       <Header
+         leftComponent={{ icon: 'menu', color: '#fff' }}
+         centerComponent={{ text: 'Handy Digital', style: { color: '#fff' } }}
+         rightComponent={{ icon: 'home', color: '#fff' }}
+       />
+       <View style={{flex: 2, backgroundColor: 'skyblue'}} >
+          {isLoading ? <ActivityIndicator/> : (
         <FlatList
           data={data}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) =>
           <Text onPress={this.getListViewItem.bind(this, item)}>{item.productname}</Text>}
                 ItemSeparatorComponent={this.renderSeparator}
           />
       )}
+       </View>
     </View>
   );
   const styles = StyleSheet.create({
